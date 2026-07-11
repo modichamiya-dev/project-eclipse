@@ -1,0 +1,15 @@
+name: ProjectEclipse
+version: 0.1.0-SNAPSHOT
+main: dev.modichamiya.eclipse.EclipsePlugin
+api-version: '1.21'
+authors: [modichamiya-dev]
+description: Production MMORPG engine for Paper 1.21.8
+commands:
+  eclipse:
+    description: Project Eclipse administration
+    usage: /eclipse
+    permission: eclipse.admin
+permissions:
+  eclipse.admin:
+    description: Access Project Eclipse administration
+    default: op
