@@ -5,6 +5,7 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":config"))
     implementation(project(":database"))
+    implementation(project(":registry"))
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
 }
 
