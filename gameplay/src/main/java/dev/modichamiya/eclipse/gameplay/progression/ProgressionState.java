@@ -1,0 +1,6 @@
+package dev.modichamiya.eclipse.gameplay.progression;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public final class ProgressionState {private long xp;private int level=1;private int skillPoints;private final Map<String,Long>skills=new ConcurrentHashMap<>();private final Map<String,Long>collections=new ConcurrentHashMap<>();private final Set<String>discoveries=ConcurrentHashMap.newKeySet();public synchronized boolean addXp(long amount,XpCurve curve){if(amount<0)throw new IllegalArgumentException();int old=level;xp=Math.addExact(xp,amount);level=curve.levelFor(xp);if(level>old)skillPoints+=level-old;return level>old;}public void addSkillXp(String skill,long amount){if(amount<0)throw new IllegalArgumentException();skills.merge(skill,amount,Math::addExact);}public long addCollection(String key,long amount){if(amount<0)throw new IllegalArgumentException();return collections.merge(key,amount,Math::addExact);}public boolean discover(String key){return discoveries.add(key);}public long xp(){return xp;}public int level(){return level;}public int skillPoints(){return skillPoints;}public Map<String,Long>skills(){return Map.copyOf(skills);}public Map<String,Long>collections(){return Map.copyOf(collections);}}

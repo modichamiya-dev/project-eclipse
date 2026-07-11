@@ -1,0 +1,7 @@
+package dev.modichamiya.eclipse.gameplay.progression;
+
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
+
+public final class StatService {private record Cached(long version,StatBlock block){}private final Map<String,Attribute>attributes=new ConcurrentHashMap<>();private final Map<UUID,List<StatModifier>>modifiers=new ConcurrentHashMap<>();private final Map<UUID,AtomicLong>versions=new ConcurrentHashMap<>();private final Map<UUID,Cached>cache=new ConcurrentHashMap<>();public void register(Attribute attribute){if(attributes.putIfAbsent(attribute.key(),attribute)!=null)throw new IllegalArgumentException("Duplicate attribute");}public void replace(UUID player,Collection<StatModifier>mods){modifiers.put(player,List.copyOf(mods));versions.computeIfAbsent(player,id->new AtomicLong()).incrementAndGet();}public StatBlock resolve(UUID player){long version=versions.computeIfAbsent(player,id->new AtomicLong()).get();Cached cached=cache.get(player);if(cached!=null&&cached.version==version)return cached.block;Map<String,Double>result=new LinkedHashMap<>();for(Attribute attribute:attributes.values()){double add=0,mult=1;for(StatModifier modifier:modifiers.getOrDefault(player,List.of()))if(modifier.attribute().equals(attribute.key())){add+=modifier.additive();mult*=modifier.multiplier();}result.put(attribute.key(),attribute.clamp((attribute.base()+add)*mult));}StatBlock block=new StatBlock(result);cache.put(player,new Cached(version,block));return block;}}
