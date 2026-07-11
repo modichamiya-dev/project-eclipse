@@ -1,0 +1,5 @@
+package dev.modichamiya.eclipse.admin;
+
+import java.util.*;
+
+public final class DefinitionSchema { private final String type;private final Map<String,FieldSchema>fields;public DefinitionSchema(String type,Collection<FieldSchema>fields){this.type=Objects.requireNonNull(type);Map<String,FieldSchema>copy=new LinkedHashMap<>();for(var field:fields)if(copy.putIfAbsent(field.name(),field)!=null)throw new IllegalArgumentException("Duplicate field "+field.name());this.fields=Map.copyOf(copy);}public String type(){return type;}public Map<String,String>validate(Map<String,Object>values){Map<String,String>errors=new LinkedHashMap<>();fields.forEach((name,schema)->schema.validate(values.get(name)).ifPresent(error->errors.put(name,error)));for(String name:values.keySet())if(!fields.containsKey(name))errors.put(name,"unknown field");return errors;}public Map<String,Object>defaults(){Map<String,Object>values=new LinkedHashMap<>();fields.forEach((name,schema)->{if(schema.defaultValue()!=null)values.put(name,schema.defaultValue());});return values;} }
