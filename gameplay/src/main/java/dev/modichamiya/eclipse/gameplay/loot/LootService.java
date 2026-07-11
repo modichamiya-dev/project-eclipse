@@ -1,0 +1,8 @@
+package dev.modichamiya.eclipse.gameplay.loot;
+
+import dev.modichamiya.eclipse.gameplay.item.*;
+import dev.modichamiya.eclipse.registry.ContentKey;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public final class LootService {private final ItemService items;private final Map<ContentKey,LootTable>tables=new ConcurrentHashMap<>();public LootService(ItemService items){this.items=Objects.requireNonNull(items);}public void register(LootTable table){for(LootEntry entry:table.entries())items.requireDefinition(entry.item());if(tables.putIfAbsent(table.key(),table)!=null)throw new IllegalArgumentException("Duplicate loot table");}public Optional<ItemInstance>roll(ContentKey tableKey,LootContext context){LootTable table=Optional.ofNullable(tables.get(tableKey)).orElseThrow();SplittableRandom random=new SplittableRandom(context.seed());List<LootEntry>eligible=table.entries().stream().filter(e->e.condition().test(context)).filter(e->random.nextDouble()<Math.min(1,e.chance()*(1+context.magicFind()/100))).toList();if(eligible.isEmpty())return Optional.empty();double total=eligible.stream().mapToDouble(LootEntry::weight).sum(),pick=random.nextDouble(total);LootEntry chosen=eligible.getLast();for(LootEntry entry:eligible){pick-=entry.weight();if(pick<=0){chosen=entry;break;}}Rarity[]rarities=Rarity.values();int rarityIndex=Math.min(rarities.length-1,(int)Math.floor(random.nextDouble()*(1+Math.max(0,context.magicFind())/100)*rarities.length/2));double quality=Math.min(100,random.nextDouble(100)+Math.max(0,context.luck())*.1);return Optional.of(items.mint(chosen.item(),rarities[rarityIndex],quality,Map.of()));}}
