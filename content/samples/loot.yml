@@ -1,0 +1,4 @@
+key: eclipse:starter_loot
+type: loot
+references: [eclipse:starter_blade]
+tags: [starter]
