@@ -1,6 +1,7 @@
 package dev.modichamiya.eclipse.api.profile;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.*;
@@ -43,6 +44,6 @@ public final class PlayerProfile {
     public Set<String> getTitles() { return Collections.unmodifiableSet(titles); } public Set<String> getAchievements() { return Collections.unmodifiableSet(achievements); }
     public Map<String,Integer> getMasteries() { return Collections.unmodifiableMap(masteries); } public Map<String,Integer> getPrestige() { return Collections.unmodifiableMap(prestige); }
     public Map<String,Integer> getReputation() { return Collections.unmodifiableMap(reputation); } public Set<String> getDiscoveries() { return Collections.unmodifiableSet(discoveries); }
-    public boolean isDirty() { return dirty; } public void markClean() { dirty = false; }
+    @JsonIgnore public boolean isDirty() { return dirty; } public void markClean() { dirty = false; }
     public void touch(Instant now) { lastSeenAt = Objects.requireNonNull(now); dirty = true; }
 }

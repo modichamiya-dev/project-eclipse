@@ -14,5 +14,5 @@ subprojects {
     }
     tasks.withType<JavaCompile>().configureEach { options.encoding = "UTF-8"; options.release.set(21) }
     tasks.withType<Test>().configureEach { useJUnitPlatform() }
-    dependencies { "testImplementation"("org.junit.jupiter:junit-jupiter:5.11.4") }
+    dependencies { add("testImplementation", "org.junit.jupiter:junit-jupiter:5.11.4") }
 }

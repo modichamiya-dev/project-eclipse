@@ -1,5 +1,5 @@
 name: ProjectEclipse
-version: '${version}'
+version: 0.1.0-SNAPSHOT
 main: dev.modichamiya.eclipse.EclipsePlugin
 api-version: '1.21'
 authors: [modichamiya-dev]
