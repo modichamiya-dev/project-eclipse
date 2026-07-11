@@ -1,0 +1,8 @@
+config-version: 1
+debug: false
+database:
+  file: eclipse.db
+  pool-size: 1
+  connection-timeout-ms: 10000
+profiles:
+  autosave-seconds: 300
