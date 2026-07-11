@@ -1,0 +1,7 @@
+package dev.modichamiya.eclipse.gameplay.economy;
+
+import java.time.Instant;
+import java.util.*;
+
+public final class OrderBook {public enum Side{BUY,SELL}public static final class Order{private final UUID id=UUID.randomUUID(),owner;private final Side side;private final long price;private long remaining;private final Instant created;public Order(UUID owner,Side side,long price,long quantity,Instant created){this.owner=owner;this.side=side;this.price=price;this.remaining=quantity;this.created=created;if(price<1||quantity<1)throw new IllegalArgumentException();}public UUID id(){return id;}public UUID owner(){return owner;}public Side side(){return side;}public long price(){return price;}public long remaining(){return remaining;}}
+    public record Fill(UUID buy,UUID sell,long price,long quantity){}private final PriorityQueue<Order>buys=new PriorityQueue<>(Comparator.comparingLong(Order::price).reversed()),sells=new PriorityQueue<>(Comparator.comparingLong(Order::price));public synchronized List<Fill>place(Order order){(order.side==Side.BUY?buys:sells).add(order);List<Fill>fills=new ArrayList<>();while(!buys.isEmpty()&&!sells.isEmpty()&&buys.peek().price>=sells.peek().price){Order buy=buys.peek(),sell=sells.peek();long quantity=Math.min(buy.remaining,sell.remaining),price=sell.price;buy.remaining-=quantity;sell.remaining-=quantity;fills.add(new Fill(buy.id,sell.id,price,quantity));if(buy.remaining==0)buys.poll();if(sell.remaining==0)sells.poll();}return fills;}}
